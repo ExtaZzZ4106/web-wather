@@ -3,22 +3,68 @@
 {% block content %}
     {% if data %}
         <div class="wather-box">
-            <h1>{{data.Jcity}}</h1>
-            <div class="wather">
-                <div class="info">
-                    <i class="bi bi-thermometer-half"></i>
-                    <div class="info-n">{{data.Jtemp}}</div>
+            <div class="main-info">
+                <h1>{{data.Jcity}}</h1>
+                <div class="name-waether">
+                    <i class={{data.Jweather_icon}}></i>
+                    <h4 class="text-w">{{data.Jweather}}</h4>
                 </div>
-                <div class="info">
-                    <i class="bi bi-sun"></i> 
-                    <div class="info-n">{{data.Jfeels_like}}</div>
-                 </div>
-                <div class="info">
-                    <i class="bi bi-wind"></i>
-                    <div class="info-n wind">{{data.Jwind_speed}}</div>
+                
+            </div>    
+            <div class="wather">
+                <div class="w1">
+                    <div class="info temp">
+                        <i class="bi bi-thermometer-half"></i>
+                        <div class="info-n">{{data.Jtemp}}</div>
+                    </div>
+                    <div class="info feelsL">
+                        Feels: 
+                        <div class="info-n fl">{{data.Jfeels_like}}</div>
+                    </div>
+                    <div class="info wind-box">
+                        <i class="bi bi-wind"></i>
+                        <div class="info-n wind">{{data.Jwind_speed}}</div>
+                    </div>
+                
+                    <div class="info vis-box">
+                        <i class="bi bi-binoculars-fill"></i>
+                        <div class="info-n vis">{{data.Jkm}} km</div>
+                    </div>
+
+
+                    
+                </div>
+                <div class="w2">
+                    <div class="info sunRiseSet-box">
+                        <div class="info-n sunriseset">
+                            <i class="bi bi-sunrise"></i> 
+                            <p class="sunrise-text">{{data.Jsunrise}}</p>
+
+                        </div>
+                    </div>
+
+                    <div class="info sunRiseSet-box">
+                        <div class="info-n sunriseset">
+                            <i class="bi bi-sunset-fill"></i> 
+                            <p class="sunrise-text">{{data.Jsunset}}</p>
+
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
-            
+
+        </div>
+        <div class="map">
+            <iframe 
+            src="https://www.google.com/maps?q={{data.lat}},{{data.lon}}&z=12&output=embed" 
+            width="90%" 
+            height="90%" 
+            style="border:0;object-fit: cover;border-radius: 20px; margin-top: 3.5%;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
         </div>
     {% else %}
         <h1>No results</h1>

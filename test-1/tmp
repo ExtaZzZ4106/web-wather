@@ -1,0 +1,10 @@
+def oneCity(request):
+    City = request.POST.get("findcity")
+    try:
+        data = Cityes.objects.get(city=City)
+
+        _City = cityInfo(data)
+        return render(request, 'main/page.html', {'data': _City})
+        #return HttpResponse(f"<h2>{_City}</h2>") 
+    except Cityes.DoesNotExist:
+        return render(request, 'main/page.html')
