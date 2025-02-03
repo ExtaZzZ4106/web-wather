@@ -52,5 +52,5 @@ https://api.openweathermap.org/data/2.5/weather?q={city}&lang=ru&units=metric&ap
 ```
 
 ## Разработчик
-**Ваше Имя** - [GitHub](https://github.com/ExtaZzZ4106)
+**Vladislav Gornostaev** - [GitHub](https://github.com/ExtaZzZ4106)
 
