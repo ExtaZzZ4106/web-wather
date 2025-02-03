@@ -5,10 +5,17 @@ import json
 import requests
 from .models import Cityes
 import datetime
+from django.views.decorators.csrf import csrf_protect
 
 appid = "2dc73daf624a5ff019e1d242171d53bf"
 
-
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 def cityInfo(City):
     
@@ -206,57 +213,32 @@ def cityInfo(City):
         print(Cdata)
         city_data.append(Cdata)
         return Cdata
-
+    
+@csrf_protect
 def oneCity(request):
-    City = request.POST.get("findcity")
-    status = cityInfo(City)
-    if status == 404:
-        return render(request, 'main/page.html')
-    else:
-        try:
-            return render(request, 'main/page.html', {'data': status})
-            #return HttpResponse(f"<h2>{_City}</h2>") 
-        except Cityes.DoesNotExist:
+    ip = get_client_ip(request)
+    res = requests.get(f"http://ipwho.is/{ip}")
+    METAdata = res.json()
+    METAcity = METAdata['city']
+    if request.POST:
+        City = request.POST.get("findcity")
+        status = cityInfo(City)
+        if status == 404:
             return render(request, 'main/page.html')
-# Create your views here.
-def mainPage(request):
-    try:    
-            error = {"cod":"404","message":"city not found"}
-            namesC = Cityes.objects.all()
-            print(namesC)
-            city_data = []
-            for city in namesC:
-                print(city.city)
-
-                response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&lang=ru&units=metric&appid={appid}")
-                data = response.json()
-                print(response)
-                if data == error:
-                    print('error')
-                    pass 
-                else:
-                    
-                    Jcity = data['name']
-                    Jtemp = int(data['main']['temp'])
-                    Jfeels_like = int(data['main']['feels_like'])
-                    Jwind_speed = int(data['wind']['speed'])
-                    
-                    Cdata = {
-                        "Jcity": Jcity,
-                        "Jtemp": Jtemp,
-                        "Jfeels_like": Jfeels_like,
-                        "Jwind_speed": Jwind_speed,
-                    }
-
-                    print("Город: ",Jcity)
-                    print("Темпиратура: ",Jtemp)
-                    print("Ощущается как :",Jfeels_like)
-                    print("Минимальная темпиратура :",Jwind_speed)
-
-                    print(Cdata)
-                    city_data.append(Cdata)
-            print(city_data)
-            return render(request, 'main/main2.html', {'data': city_data})
-            
-    except Exception as e:
-            print(e)
+        else:
+            try:
+                return render(request, 'main/page.html', {'data': status})
+                #return HttpResponse(f"<h2>{_City}</h2>") 
+            except Cityes.DoesNotExist:
+                return render(request, 'main/page.html')
+    else:
+        status = cityInfo(METAcity)
+        if status == 404:
+            return render(request, 'main/page.html')
+        else:
+            try:
+                return render(request, 'main/page.html', {'data': status})
+                #return HttpResponse(f"<h2>{_City}</h2>") 
+            except Cityes.DoesNotExist:
+                return render(request, 'main/page.html')
+        

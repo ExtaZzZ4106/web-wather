@@ -8,3 +8,52 @@ def oneCity(request):
         #return HttpResponse(f"<h2>{_City}</h2>") 
     except Cityes.DoesNotExist:
         return render(request, 'main/page.html')
+    
+
+
+# Create your views here.
+def mainPage(request):
+    try:    
+            ip = get_client_ip()
+            res = requests.get(f"http://ipwho.is/{ip}")
+            METAdata = res.json()
+            METAcity = METAdata['city']
+            error = {"cod":"404","message":"city not found"}
+            namesC = Cityes.objects.all()
+            print(namesC)
+            city_data = []
+            for city in METAcity:
+                print(METAcity)
+
+                response = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&lang=ru&units=metric&appid={appid}")
+                data = response.json()
+                print(response)
+                if data == error:
+                    print('error')
+                    pass 
+                else:
+                    
+                    Jcity = data['name']
+                    Jtemp = int(data['main']['temp'])
+                    Jfeels_like = int(data['main']['feels_like'])
+                    Jwind_speed = int(data['wind']['speed'])
+                    
+                    Cdata = {
+                        "Jcity": Jcity,
+                        "Jtemp": Jtemp,
+                        "Jfeels_like": Jfeels_like,
+                        "Jwind_speed": Jwind_speed,
+                    }
+
+                    print("Город: ",Jcity)
+                    print("Темпиратура: ",Jtemp)
+                    print("Ощущается как :",Jfeels_like)
+                    print("Минимальная темпиратура :",Jwind_speed)
+
+                    print(Cdata)
+                    city_data.append(Cdata)
+            print(city_data)
+            return render(request, 'main/page.html', {'data': city_data})
+            
+    except Exception as e:
+            print(e)
